@@ -16,6 +16,8 @@ def store_translation(t):
     return model.id
 
 # Run Translation Task => run a deep learning Model
+
+
 def run_translation(t_id: int):
     model = TranslationModel.get_by_id(t_id)
 
@@ -27,3 +29,11 @@ def run_translation(t_id: int):
     model.save()
 
 # Find translation Task => Retrieve the translation from the DB
+
+
+def find_translation(t_id: int):
+    model = TranslationModel.get_by_id(t_id)
+    translation = model.translation
+    if translation is None:
+        translation = "Processing, check back later."
+    return translation
