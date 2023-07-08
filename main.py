@@ -6,6 +6,7 @@ app = FastAPI()
 
 languages = ["English", "German", "French", "Russian"]
 
+
 class Translation(BaseModel):
     text: str
     base_lang: str
@@ -15,15 +16,21 @@ class Translation(BaseModel):
     def valid_lang(cls, lang):
         if lang not in languages:
             raise ValueError("Invalid Language")
+        return lang
 
 
-
-## Index Route => Test if this route is working
+# Index Route => Test if this route is working
 @app.get("/")
 def get_root():
     return {"message: Hello World"}
 
-## Translate Route => Take in a translate request, return a translation, and store it on the DB
+# Translate Route => Take in a translate request, return a translation, and store it on the DB
+@app.post("/translate")
+def post_translation(t: Translation, background_tasks: BackgroundTasks):
+    t_id = tasks.store_translation(t)
+    background_tasks.add_task(tasks.run_translation, t_id)
+    return {"task_id": t_id}
 
 
-## Results route => Take in a translation ID, and return the translated text
+
+# Results route => Take in a translation ID, and return the translated text
